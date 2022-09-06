@@ -1,0 +1,28 @@
+---
+title: Mini Project 1
+author: Arshia Elahi and Brandon Luo
+output: pdf_document
+---
+
+# Contributions
+
+# Answers
+
+## 1
+
+$F_T(t) = \int_{-\infty}^{t} f_T(t) dt$
+
+$F_T(15) = \int_{-\infty}^{14} f_T(t) dt$
+
+$1 - F_T(15) = 1 - \int_{-\infty}^{15} f_T(t) dt$
+
+$P(T \ge 15) = 1 - \int_{0}^{15} 0.2 e^{-0.1t} - 0.2 e^{-0.2t} dt$
+
+$P(T \ge 15) = 0.3964733$
+
+# Code
+```{r}
+integrand <- function(t) { 0.2 * exp(-0.1 * t) - 0.2 * exp(-0.2 * t) }
+
+1 - integrate(integrand, lower=0, upper=15)$value
+```
