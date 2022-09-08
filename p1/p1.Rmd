@@ -111,6 +111,14 @@ print(tab)
 
 # 2
 
-# p = 1 - pi / 4
-# 4 (1 - p) = pi
+# p = pi (1 ^ 2) / 4
+# 4 * p = pi
+
+count = 0
+
+for (i in 1:10000) {
+	count = count + 1 * (sum(runif(2) ^ 2) <= 1)
+}
+
+4 * (count / 10000)
 ```
