@@ -47,6 +47,7 @@ output: pdf_document
 	\end{enumerate}
 
 	\item
+	Variability of estimates using larger sample sizes are smaller.
 
 \end{enumerate}
 
@@ -87,4 +88,29 @@ for (i in 1:4) {
 	print(mean(data)) 
 	print(sum(data >= 15) / length(data))
 }
+
+means_1000 = c()
+means_100000 = c()
+
+p_15_1000 = c()
+p_15_100000 = c()
+
+# 1c
+for (i in 1:5) {
+	data = replicate(1000, max(-10 * log(runif(2))))
+	means_1000[i] = mean(data)
+	p_15_1000[i] = sum(data >= 15) / length(data)
+
+	data = replicate(100000, max(-10 * log(runif(2))))
+	means_100000[i] = mean(data)
+	p_15_100000[i] = sum(data >= 15) / length(data)
+}
+
+tab = cbind(means_1000, p_15_1000, means_100000, p_15_100000)
+print(tab)
+
+# 2
+
+# p = 1 - pi / 4
+# 4 (1 - p) = pi
 ```
