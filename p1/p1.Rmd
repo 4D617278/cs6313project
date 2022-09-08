@@ -8,21 +8,83 @@ output: pdf_document
 
 # Answers
 
-## 1
+```{=latex}
+\begin{enumerate}
+	\item
 
-$F_T(t) = \int_{-\infty}^{t} f_T(t) dt$
+	\begin{enumerate}
+	\item
 
-$F_T(15) = \int_{-\infty}^{14} f_T(t) dt$
+	$F_T(t) = \int_{-\infty}^{t} f_T(t) dt$
 
-$1 - F_T(15) = 1 - \int_{-\infty}^{15} f_T(t) dt$
+	$F_T(15) = \int_{-\infty}^{15} f_T(t) dt$
 
-$P(T \ge 15) = 1 - \int_{0}^{15} 0.2 e^{-0.1t} - 0.2 e^{-0.2t} dt$
+	$1 - F_T(15) = 1 - \int_{-\infty}^{15} f_T(t) dt$
 
-$P(T \ge 15) = 0.3964733$
+	$P(T \ge 15) = 1 - \int_{0}^{15} 0.2 e^{-0.1t} - 0.2 e^{-0.2t} dt$
+
+	$P(T \ge 15) = 0.3964733$
+
+	\item
+	\begin{enumerate}
+	\item
+	$r = 0.1$
+
+	$F(t) = 1 - e^{-0.1t}$
+
+	$F(T) = 1 - e^{-0.1T}$
+
+	$1 - e^{-0.1T} = U$
+
+	$T = -10\ln(1 - U)$
+
+	$T = -10\ln(U)$
+	\item
+	\item
+	\item
+	\item
+	\item
+	\end{enumerate}
+
+	\item
+
+\end{enumerate}
+
+\item
+
+\end{enumerate}
+```
 
 # Code
 ```{r}
-integrand <- function(t) { 0.2 * exp(-0.1 * t) - 0.2 * exp(-0.2 * t) }
+# 1a
 
-1 - integrate(integrand, lower=0, upper=15)$value
+# cdf(t) = 0.2e^-0.1t - 0.2e^-0.2t
+density <- function(t) { 0.2 * exp(-0.1 * t) - 0.2 * exp(-0.2 * t) }
+
+p_lt_15 = 1 - integrate(density, lower=0, upper=15)$value
+
+# 1bi, 1bii
+data = replicate(10000, max(-10 * log(runif(2))))
+
+# 1biii
+hist(data, probability=T)
+curve(density, add=T)
+
+# 1biv
+mean(data)
+15 - mean(data)
+
+# 1bv
+p_lt_15_est = sum(data >= 15) / length(data)
+
+p_lt_15 - p_lt_15_est 
+
+
+# 1bvi
+for (i in 1:4) {
+	data = replicate(10000, max(-10 * log(runif(2))))
+	print(mean(data)) 
+	print(sum(data >= 15) / length(data))
+}
 ```
