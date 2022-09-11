@@ -6,6 +6,10 @@ output: pdf_document
 
 # Contributions
 
+Brandon Luo - 1a, 1b
+
+Arshia Elahi - 1c, 2
+
 # Answers
 
 ```{=latex}
@@ -28,6 +32,8 @@ output: pdf_document
 	\item
 	\begin{enumerate}
 	\item
+	Inverse Transform Method
+
 	$r = 0.1$
 
 	$F(t) = 1 - e^{-0.1t}$
@@ -40,18 +46,41 @@ output: pdf_document
 
 	$T = -10\ln(U)$
 	\item
+	Answer in Code Section.
 	\item
+	The histogram approximates the probability density function.
 	\item
+	$E_s(T) \approx E(T)$
 	\item
+	$P_s(T \ge 15) \approx P(T \ge 15)$
 	\item
+	$E_s(T) \approx E(T) \land P_s(T \ge 15) \approx P(T \ge 15)$
 	\end{enumerate}
 
 	\item
-	Variability of estimates using larger sample sizes are smaller.
+	The variance of the sample mean using larger sample sizes (n) is smaller. 
+
+	Let $R, R_1, ..., R_n$ be i.i.d random variables with a mean m and variance v.
+
+	$R_m = \dfrac{1}{n} \sum_{i = 1}^n R_i$
+
+	$V(R_m) = V(\dfrac{1}{n} \sum_{i = 1}^n R_i)$
+
+	$V(R_m) = \dfrac{1}{n^2} \sum_{i = 1}^n V(R_i)$
+
+	$V(R_m) = \dfrac{1}{n} V(R)$
 
 \end{enumerate}
 
 \item
+
+p is the proportion of the area of the quarter of the circle with radius 1 that has a bottom left corner at (0, 0) and of the area of the square with side length 1 with the left corner at (0, 0).
+
+$p = \dfrac{0.25 \pi r ^ 2}{s ^ 2}$
+
+$p = \dfrac{0.25 \pi (1 ^ 2)}{1 ^ 2}$
+
+$\pi = 4 * p$
 
 \end{enumerate}
 ```
@@ -60,61 +89,61 @@ output: pdf_document
 ```{r}
 # 1a
 
-# cdf(t) = 0.2e^-0.1t - 0.2e^-0.2t
+# pdf(t) = 0.2e^-0.1t - 0.2e^-0.2t
 density <- function(t) { 0.2 * exp(-0.1 * t) - 0.2 * exp(-0.2 * t) }
 
 p_lt_15 = 1 - integrate(density, lower=0, upper=15)$value
 
 # 1bi, 1bii
-data = replicate(10000, max(-10 * log(runif(2))))
+
+# T = max(-10ln(U), -10ln(U))
+lifetime <- function(n) { replicate(n, max(-10 * log(runif(2)))) }
+data = lifetime(10000)
 
 # 1biii
 hist(data, probability=T)
 curve(density, add=T)
 
 # 1biv
-mean(data)
-15 - mean(data)
+sample_mean = mean(data)
+population_mean = 15
+population_mean - sample_mean
 
 # 1bv
 p_lt_15_est = sum(data >= 15) / length(data)
 
 p_lt_15 - p_lt_15_est 
 
-
 # 1bvi
-for (i in 1:4) {
-	data = replicate(10000, max(-10 * log(runif(2))))
-	print(mean(data)) 
-	print(sum(data >= 15) / length(data))
+mean_and_p_15 <- function(n, s) {
+	means = c()
+	p_15 = c()
+
+	for (i in 1:n) {
+		data = lifetime(s)
+		means[i] = mean(data)
+		p_15[i] = sum(data >= 15) / length(data)
+	}
+
+	tab = cbind(means, p_15)
+	print(tab)
 }
 
-means_1000 = c()
-means_100000 = c()
-
-p_15_1000 = c()
-p_15_100000 = c()
+mean_and_p_15(4, 10000)
 
 # 1c
-for (i in 1:5) {
-	data = replicate(1000, max(-10 * log(runif(2))))
-	means_1000[i] = mean(data)
-	p_15_1000[i] = sum(data >= 15) / length(data)
 
-	data = replicate(100000, max(-10 * log(runif(2))))
-	means_100000[i] = mean(data)
-	p_15_100000[i] = sum(data >= 15) / length(data)
-}
-
-tab = cbind(means_1000, p_15_1000, means_100000, p_15_100000)
-print(tab)
+mean_and_p_15(5, 1000)
+mean_and_p_15(5, 100000)
 
 # 2
 
-# p = pi (1 ^ 2) / 4
-# 4 * p = pi
-
 count = 0
+
+# distance from origin = sum(runif(2) ^ 2)
+# if distance <= 1 the point is in the circle and we increment count
+# the number of points in the circle / total number of points is the estimated proportion
+# 4 * p = pi (above)
 
 for (i in 1:10000) {
 	count = count + 1 * (sum(runif(2) ^ 2) <= 1)
