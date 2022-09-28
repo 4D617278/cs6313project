@@ -1,0 +1,45 @@
+---
+title: Mini Project 2
+author: Arshia Elahi and Brandon Luo
+output: pdf_document
+---
+
+# Contributions
+
+Brandon Luo - 1
+
+Arshia Elahi - 2
+
+# Answers
+
+```{=latex}
+\begin{enumerate}
+\item
+    \begin{enumerate}
+        \item
+
+        \item
+
+        \item
+
+        \item
+    \end{enumerate}
+\item
+\end{enumerate}
+```
+
+# Code
+```{r}
+# 1a
+data = read.csv("roadrace.csv")
+
+barplot(table(data["Maine"]))
+
+# 1b
+
+# 1c
+
+# 1d
+
+# 2
+```
