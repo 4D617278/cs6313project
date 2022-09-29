@@ -17,29 +17,81 @@ Arshia Elahi - 2
 \item
     \begin{enumerate}
         \item
+        We can conclude that approximately every three out of four people are from Maine and approximately every one out of four people are not from Maine.
+
+        Number of people not from Maine $\approx \frac{1417}{1417 + 4458} \approx \frac{1500}{6000} = \frac{1}{4}$
+
+        Number of people from Maine $\approx \frac{4458}{1417 + 4458} \approx \frac{4500}{6000} = \frac{3}{4}$
 
         \item
+        We can conclude that the two distributions are slightly right-skewed and their average time is around 60 minutes.
+
+        $mean_1 - median_1 = 58.20 - 57.03 > 0$
+
+        $mean_2 - median_2 = 57.82 - 56.92 > 0$
+
+        $mean_1 = 58.20 \approx 60, median_1 = 57.03 \approx 60$
+
+        $mean_2 = 57.82 \approx 60, median_2 = 56.92 \approx 60$
 
         \item
+        We can conclude that there are outliers for the two distributions and that 75\% of times fall between about 50 and 65.
+
+        $Q3_1 + IQR_2 * 1.5 = 64.24 + (64.24 - 50) * 1.5 = 85.6 < 152.17$
+
+        $Q3_2 + IQR_2 * 1.5 = 64.83 + (64.83 - 49.15) * 1.5 = 88.35 < 133.71$
+
+        $Q1_1 = 50$, $Q3_1 = 64.24 \approx 65$
+
+        $Q1_1 = 49.15$, $Q3_1 = 64.83 \approx 65$
 
         \item
+        We can conclude that the two distributions are approximately symmetric and that males tend to be older than females.
+
+        $mean_1 - median_1 = 40.45 - 41 \approx 0$
+
+        $mean_2 - median_2 = 37.24 - 36 \approx 0$
+
+        $mean_1 = 40.45 > mean_2 = 37.24$, $median_1 = 41 > median_2 = 36$
     \end{enumerate}
 \item
 \end{enumerate}
 ```
 
 # Code
-```{r}
+```{r, fig.width=5, fig.height=4}
 # 1a
 data = read.csv("roadrace.csv")
 
 barplot(table(data["Maine"]))
 
+table(data["Maine"])
+
 # 1b
+
+maine_minutes = data[data$"Maine" == "Maine", "Time..minutes."]
+away_minutes = data[data$"Maine" == "Away", "Time..minutes."]
+
+bins = seq(20, 160, length.out = 8)
+
+hist(maine_minutes, xlab="Time (minutes)", ylab="Frequency", breaks=bins, main="")
+hist(away_minutes, xlab="Time (minutes)", ylab="Frequency", breaks=bins, main="", ylim=c(0, 1500))
+
+summary(maine_minutes)
+summary(away_minutes)
 
 # 1c
 
+boxplot(maine_minutes, away_minutes, xlab="", ylab="Time (minutes)", names=c("Maine", "Away"))
+
 # 1d
 
+male_ages = strtoi(data[data$"Sex" == "M", "Age"])
+female_ages = strtoi(data[data$"Sex" == "F", "Age"])
+
+boxplot(male_ages, female_ages, xlab="Sex", ylab="Age", names=c("M", "F"))
+
+summary(male_ages)
+summary(female_ages)
 # 2
 ```
