@@ -55,6 +55,16 @@ Arshia Elahi - 2
         $mean_1 = 40.45 > mean_2 = 37.24$, $median_1 = 41 > median_2 = 36$
     \end{enumerate}
 \item
+The distribution is right-skewed since the mean (17.02083 fatal accidents) was greater than the median (13.5 fatal accidents),
+the bottom 50\% quantile of the box plot is much shorter in length than the upper 50\% quantile, and because there are two outliers 
+(Greenville and Horry) that had 51 and 60 accidents, respectively. These two counties are outliers because they are greater than 1.5 * IQR plus Q3.
+
+We observed counties with 0 accidents. This could be due to lack of data or a mistake since the “counties” with 
+0 accidents are labeled as “Other” and “Unknown” which are not actual county names. This may suggest errors or unlabeled data.
+
+The greater number of motorcycle accidents could be caused by 
+higher population densities increasing traffic congestion, higher speed limits, or
+a younger age distribution which is correlated with risky behavior.
 \end{enumerate}
 ```
 
@@ -94,4 +104,81 @@ boxplot(male_ages, female_ages, xlab="Sex", ylab="Age", names=c("M", "F"))
 summary(male_ages)
 summary(female_ages)
 # 2
+motorcycle_accidents_data <- read.csv('motorcycle.csv', header = TRUE, stringsAsFactors = FALSE)
+
+# Summary
+
+summary(motorcycle_accidents_data$Fatal.Motorcycle.Accidents)
+
+# Length
+
+num_counties = length(motorcycle_accidents_data$Fatal.Motorcycle.Accidents)
+
+print(num_counties)
+
+# Range
+
+minimum = min(motorcycle_accidents_data$Fatal.Motorcycle.Accidents)
+
+maximum = max(motorcycle_accidents_data$Fatal.Motorcycle.Accidents)
+
+range = (maximum - minimum)
+
+print(range)
+
+# Variance
+
+variance = var(motorcycle_accidents_data$Fatal.Motorcycle.Accidents)
+
+print(variance)
+
+# Standard Deviation
+
+std = sd(motorcycle_accidents_data$Fatal.Motorcycle.Accidents)
+
+print(std)
+
+# IQR
+
+q1 = unname(quantile(motorcycle_accidents_data$Fatal.Motorcycle.Accidents, 0.25))
+
+q3 = unname(quantile(motorcycle_accidents_data$Fatal.Motorcycle.Accidents, 0.75))
+
+iqr = q3 - q1
+
+print(iqr)
+
+# Lower Bound for Non-Outliers
+
+lower_normal_range <- q1 - (1.5 * iqr)
+
+print(lower_normal_range)
+
+# Upper Bound for Non-Outliers
+
+upper_normal_range <- q3 + (1.5 * iqr)
+
+print(upper_normal_range)
+
+# Finding Outliers and Printing the County/Value
+
+for(i in 1:num_counties) 
+
+{
+
+  lower_normal_range
+
+  entry <- motorcycle_accidents_data[i,]
+
+  if(entry$Fatal.Motorcycle.Accidents < lower_normal_range | entry$Fatal.Motorcycle.Accidents > upper_normal_range)
+
+  {
+
+    print(paste(entry$County, entry$Fatal.Motorcycle.Accidents, sep=" - "))
+
+  }
+
+}
+
+boxplot(motorcycle_accidents_data$Fatal.Motorcycle.Accidents)
 ```
