@@ -1,0 +1,85 @@
+---
+title: Mini Project 3
+author: Arshia Elahi and Brandon Luo
+output: pdf_document
+---
+
+# Contributions
+
+Arshia Elahi - 1
+
+Brandon Luo - 2
+
+# Answers
+
+```{=latex}
+\begin{enumerate}
+\item
+
+    \begin{enumerate}
+        \item
+        \item
+        \item
+        \item
+    \end{enumerate}
+
+\item
+
+    \begin{enumerate}
+        \item
+        $\max\limits_{\theta} P(\textbf{X}, \theta)$
+
+        $\max\limits_{\theta} \prod_i P(X_i, \theta)$ (independence)
+
+        $\max\limits_{\theta} \ln \prod_i P(X_i, \theta)$ (ln is monotonic)
+
+        $\max\limits_{\theta} \sum_i \ln P(X_i, \theta)$
+
+        $\max\limits_{\theta} \sum_i \ln \frac{\theta}{X_i^{\theta + 1}}$
+
+        $\max\limits_{\theta} \sum_i (\ln \theta - (\theta + 1) \ln X_i)$
+
+        $\max\limits_{\theta} n \ln \theta - (\theta + 1) \sum_i \ln X_i$
+
+        $\frac{\partial}{\partial{\theta}} [n \ln \theta - (\theta + 1) \sum_i \ln X_i] = 0$
+
+        $\frac{n}{\theta} - \sum_i \ln X_i = 0$
+
+        $\theta = \frac{n}{\sum_i \ln X_i}$
+        \item
+        \item
+        Our answers match.
+        \item
+    \end{enumerate}
+
+\end{enumerate}
+```
+
+# Code
+```{r}
+# 1a
+
+# 1b
+
+# 1c
+
+# 1d
+
+# 2a
+
+# 2b
+data = c(21.72, 14.65, 50.42, 28.78, 11.23)
+
+length(data) / sum(log(data))
+
+# 2c
+
+neg_log_likelihood = function(theta, X) { 
+    -(length(X) * log(theta) - (theta + 1) * sum(log(X)))
+}
+
+optim(par=c(3), fn=neg_log_likelihood, X=data)
+
+# 2d
+
+```
