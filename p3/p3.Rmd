@@ -47,9 +47,12 @@ Brandon Luo - 2
 
         $\theta = \frac{n}{\sum_i \ln X_i}$
         \item
+        Answer in Code Section.
         \item
         Our answers match.
         \item
+        These approximations will not be good because the sample size is small (n = 5).
+        Since we assume that the model is correct, the approximations will have a lower variance than any unbiased estimator.
     \end{enumerate}
 
 \end{enumerate}
@@ -78,8 +81,17 @@ neg_log_likelihood = function(theta, X) {
     -(length(X) * log(theta) - (theta + 1) * sum(log(X)))
 }
 
-optim(par=c(3), fn=neg_log_likelihood, X=data)
+ml = optim(par=c(3), fn=neg_log_likelihood, X=data, hessian=TRUE)
 
 # 2d
 
+# Standard Error
+std_error = sqrt(diag(solve(ml$hessian)))
+std_error
+
+# Confidence Interval
+
+q = qnorm(1 - ((1 - 0.95) / 2))
+
+c(ml$par - std_error * q, ml$par + std_error * q)
 ```
