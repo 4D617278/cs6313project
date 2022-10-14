@@ -29,15 +29,15 @@ Brandon Luo - 2
         \item
         $\max\limits_{\theta} P(\textbf{X}, \theta)$
 
-        $\max\limits_{\theta} \prod_i P(X_i, \theta)$ (independence)
+        $\max\limits_{\theta} \prod_{i=1}^n P(X_i, \theta)$ (independence)
 
-        $\max\limits_{\theta} \ln \prod_i P(X_i, \theta)$ (ln is monotonic)
+        $\max\limits_{\theta} \ln \prod_{i=1}^n P(X_i, \theta)$ (ln is monotonic)
 
-        $\max\limits_{\theta} \sum_i \ln P(X_i, \theta)$
+        $\max\limits_{\theta} \sum_{i=1}^n \ln P(X_i, \theta)$
 
-        $\max\limits_{\theta} \sum_i \ln \frac{\theta}{X_i^{\theta + 1}}$
+        $\max\limits_{\theta} \sum_{i=1}^n \ln \frac{\theta}{X_i^{\theta + 1}}$
 
-        $\max\limits_{\theta} \sum_i (\ln \theta - (\theta + 1) \ln X_i)$
+        $\max\limits_{\theta} \sum_{i=1}^n (\ln \theta - (\theta + 1) \ln X_i)$
 
         $\max\limits_{\theta} n \ln \theta - (\theta + 1) \sum_i \ln X_i$
 
@@ -49,10 +49,9 @@ Brandon Luo - 2
         \item
         Answer in Code Section.
         \item
-        Our answers match.
+        Our answers match since $0.3233874 \approx 0.3233883$.
         \item
-        These approximations will not be good because the sample size is small (n = 5).
-        Since we assume that the model is correct, the approximations will have a lower variance than any unbiased estimator.
+        These approximations will not be good because the sample size is too small (n = 5).
     \end{enumerate}
 
 \end{enumerate}
@@ -73,15 +72,21 @@ Brandon Luo - 2
 # 2b
 data = c(21.72, 14.65, 50.42, 28.78, 11.23)
 
+# n / sum(log(X))
 length(data) / sum(log(data))
 
 # 2c
 
+# -(n ln theta  - (theta + 1) sum(ln(X)))
 neg_log_likelihood = function(theta, X) { 
     -(length(X) * log(theta) - (theta + 1) * sum(log(X)))
 }
 
-ml = optim(par=c(3), fn=neg_log_likelihood, X=data, hessian=TRUE)
+ml = optim(par=c(3), fn=neg_log_likelihood, method="L-BFGS-B", lower=0.1, X=data, hessian=TRUE)
+
+# Max Likelikhood Estimate
+
+ml$par
 
 # 2d
 
@@ -91,7 +96,9 @@ std_error
 
 # Confidence Interval
 
-q = qnorm(1 - ((1 - 0.95) / 2))
+prob = 1 - (1 - 0.95) / 2
+
+q = qnorm(prob)
 
 c(ml$par - std_error * q, ml$par + std_error * q)
 ```
