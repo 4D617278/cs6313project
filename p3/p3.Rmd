@@ -18,9 +18,13 @@ Brandon Luo - 2
 
     \begin{enumerate}
         \item
+        Generate a random sample from a uniform distribution from 0 to theta. This sample is of size n, meaning we randomly generate a value with runif n times. Then, we simply iterate through the sample and find the maximal value to get our MLE. Then, for the MOM approach, we get the mean value from the sample and simply multiply it by 2. We then return these two values in a list. Finally, we take the true theta value, subtract theta1 (MLE) from it, then square it. We repeat that for every single generated value in the estimation and average the squared difference. Then, repeat that for theta2 (MOM), and then compare.
         \item
+        We will simply call our function with different parameters of n and theta. As explained in part a, we generate theta1 and theta2. Then, we subtract these estimators from the true theta, square it, and average it across the size of n.
         \item
+        We repeat for all combinations and then we show this graphically by putting the mean squared error on the y axis and the value of n. This makes us a graph where we can directly see the difference in mean squared error for theta1 and theta2 estimates. Finally, we need to generate this graph for all theta (1, 2, 3, 5, 10, 30).
         \item
+        MLE has a lower mean squared error as n increases. The answer does not seem to depend on theta. This is because MLE has asymptotic optimality which means it achieves the lowest variance of all unbiased estimators as the sample size approaches infinity and the mean squared error is the variance plus the bias squared. However, the bias also approaches 0 since MLE is a consistent estimator.
     \end{enumerate}
 
 \item
@@ -51,7 +55,7 @@ Brandon Luo - 2
         \item
         Our answers match since $0.3233874 \approx 0.3233883$.
         \item
-        These approximations will not be good because the sample size is too small (n = 5).
+        These approximations will not be good because the sample size is too small (n = 5) and the sample does not come from a normal distribution.
     \end{enumerate}
 
 \end{enumerate}
@@ -59,15 +63,64 @@ Brandon Luo - 2
 
 # Code
 ```{r}
-# 1a
+# 1 -> Paramter Estimation and Errors
 
-# 1b
+# 1b, 1c
 
-# 1c
+estimate <- function(n, theta)
+{
+  # randomly sample from U(0, theta) n times, we use the same sample for theta1 and theta2
+  random_sample <- runif(n, 0, theta)
+  # theta 1 is simply the max value we generate from the random sample
+  Theta1 <- max(random_sample)
+  # theta 2 is the mean of the sample * 2. it is consistent.
+  Theta2 <- 2 * mean(random_sample)
+  # return the estimates in list
+  return(c(Theta1, Theta2))
+}
 
-# 1d
+# Iterating through theta values and sample sizes and generating MLE/MOM
+# Theta1 is the MLE, Theta2 is the MOM
 
-# 2a
+#store the given theta values that we must look at
+theta_values = c(1, 5, 50, 100)
+
+#iterate on all the given values of n
+n_values <- c(1, 2, 3, 5, 10, 30)
+
+#replicate 1000 times
+replication = 1000
+
+# we iterate through every given theta value and generate a graph using the MSE
+for(theta in theta_values)
+{
+  #make a dataframe using the current n_value, error1, and error2
+  mse <- data.frame(n_value = numeric(), error1 = numeric(), error2 = numeric())
+
+  #iterate on all sizes of n
+  for(n in n_values)
+  {
+    #make estimate with replication
+    curr_estimate <- replicate(replication, estimate(n, theta))
+    squared_error <- (theta - curr_estimate) ^ 2
+    #average the theta1 and theta2 to get the mse's
+    mse_theta1 <- mean(squared_error[1, ])
+    mse_theta2 <- mean(squared_error[2, ])
+    #current dataframe involves the current n value and the two estimates (means)
+    current_values = data.frame(n_value = n, error1 = mse_theta1, error2 = mse_theta2)
+    #append to the overall data frame
+    mse <- rbind(mse, current_values)
+  }
+  
+  #plot the MSE for the MLE approach (theta1)
+  graph_title = paste("MSE for Estimation of Theta", theta, sep = " = ")
+  plot(mse$n_value, mse$error1, xlab = "n", ylab = "MSE", type = "o", main = graph_title)
+  # plot for the MOM approach (theta2)
+  points(mse$n_value, mse$error2, type = "o", col = "red")
+  #legend for understanding difference between the approaches
+  legend_rows = c("Black is MLE", "Red is MOM")
+  legend(x="topright", legend = legend_rows)
+}
 
 # 2b
 data = c(21.72, 14.65, 50.42, 28.78, 11.23)
