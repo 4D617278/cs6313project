@@ -1,0 +1,82 @@
+---
+title: Mini Project 4
+author: Arshia Elahi and Brandon Luo
+output: pdf_document
+---
+
+# Contributions
+
+Arshia Elahi - 1
+
+Brandon Luo - 2
+
+# Answers
+
+```{=latex}
+\begin{enumerate}
+\item
+There is a weak positive correlation between GPA and ACT scores. 
+
+The expected population correlation coefficient is 0.2723708 with a 95\% confidence margin of 0.2054467.
+\item
+    \begin{enumerate}
+        \item
+        \item
+        \item
+    \end{enumerate}
+\item
+\end{enumerate}
+```
+
+# Code
+```{r}
+# 1
+gpa_act = read.csv("gpa.csv")
+
+# scatter plot
+attach(gpa_act)
+
+plot(gpa, act)
+
+detach(gpa_act)
+
+# point estimate
+s_cor = cor(gpa_act["gpa"], gpa_act["act"])
+
+s_cor
+
+# bootstrapped bias and std error
+library(boot)
+
+statistic = function(data, i) {
+    cor(data[i, "gpa"], data[i, "act"])
+}
+
+set.seed(1)
+
+boot.out = boot(gpa_act, statistic, 999)
+
+boot.out
+
+# expected value of parameter
+mean(boot.out$t)
+
+# percentile bootstrap confidence interval
+
+ci = boot.ci(boot.out, type = c("perc"))
+
+ci
+
+# margin
+
+(ci$percent[5] - ci$percent[4]) / 2
+
+# 2a
+voltage = read.csv("VOLTAGE.csv")
+
+# 2b
+
+# 2c
+
+# 3
+```
