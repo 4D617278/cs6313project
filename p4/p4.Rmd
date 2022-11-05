@@ -21,15 +21,18 @@ The expected population correlation coefficient is 0.2723708 with a 95\% confide
 \item
     \begin{enumerate}
         \item
+        The two distributions do not seem similar since the measures of central tendency are more than 2 sample standard deviations apart from each other.
         \item
+        It does not appear that the manufacturing process can be established locally since the confidence interval does not contain the value 0. We assume that a confidence interval of 95\% is a sufficiently low level of significance and that the sampling distributions are normal because the sample size is greater than or equal to 30. The approximate normality of the sampling distribution was verified with qqnorm by checking that each plot is approximately linear.
         \item
+        My conclusion in (b) is the same as what I expected from the exploratory analysis in (a).
     \end{enumerate}
 \item
 \end{enumerate}
 ```
 
 # Code
-```{r}
+```{r, fig.width=5, fig.height=4}
 # 1
 gpa_act = read.csv("gpa.csv")
 
@@ -72,11 +75,37 @@ ci
 (ci$percent[5] - ci$percent[4]) / 2
 
 # 2a
-voltage = read.csv("VOLTAGE.csv")
+voltage_loc = read.csv("VOLTAGE.csv")
+
+loc_0 = voltage_loc[voltage_loc$location == 0, ]$voltage
+loc_1 = voltage_loc[voltage_loc$location == 1, ]$voltage
+
+sd(loc_0) / sqrt(length(loc_0))
+sd(loc_1) / sqrt(length(loc_1))
+
+summary(loc_0)
+summary(loc_1)
+
+hist(loc_0)
+hist(loc_1)
 
 # 2b
 
-# 2c
+# verify normality
+qqnorm(loc_0)
+qqnorm(loc_1)
+
+# confidence interval
+center = mean(loc_0) - mean(loc_1)
+
+center
+
+std_err = sqrt((var(loc_0) / length(loc_0)) + (var(loc_1) / length(loc_1)))
+margin = qnorm(0.975) * std_err
+
+margin
+
+c(center - margin, center + margin)
 
 # 3
 ```
