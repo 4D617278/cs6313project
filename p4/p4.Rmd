@@ -6,9 +6,9 @@ output: pdf_document
 
 # Contributions
 
-Arshia Elahi - 1
+Brandon Luo - 1, 2
 
-Brandon Luo - 2
+Arshia Elahi - 3
 
 # Answers
 
@@ -28,6 +28,7 @@ The expected population correlation coefficient is 0.2723708 with a 95\% confide
         My conclusion in (b) is the same as what I expected from the exploratory analysis in (a).
     \end{enumerate}
 \item
+To check whether or not there is a difference between the population means, we must first check to see if the distributions for the theoretical and experimental samples are approximately normal. This is done using qqnorm and if the resulting graph is approximately linear, we assume the distribution is normal. Then, we must construct a 95\% confidence interval. We first obtain things like the sample size, standard deviation of the mean difference between the samples, and then the standard error, and degrees of freedom since we don’t know the population variance and have relatively small sample size. Once we construct this confidence interval, we must determine if 0 is within the interval. If so, there is no evidence that there is a difference in mean vapor pressure between the two groups based on the samples provided.
 \end{enumerate}
 ```
 
@@ -108,4 +109,50 @@ margin
 c(center - margin, center + margin)
 
 # 3
+
+# read in data and put into frame
+data_frame <- read.csv("VAPOR.csv")
+
+# add in cols for theoretical value and experimental value
+experimental <- data_frame$experimental
+theoretical <- data_frame$theoretical
+
+# approximating if data is normally distributed, it appears to be approximately linear on qqnorm by visual inspection
+plot(theoretical)
+plot(experimental)
+qqnorm(theoretical)
+qqnorm(experimental)
+
+# difference is based off individually comparing the two columns to get pairs
+difference <- theoretical - experimental
+
+# calculate sample mean, standard deviation, standard error, and confidence interval
+mean_difference <- mean(difference)
+sd_difference <- sd(difference)
+
+# obtain the sample size
+sample_size <- length(experimental)
+
+# take the sample size and subtract 1 for df
+degrees_freedom <- sample_size - 1
+
+# get standard error by dividing by root(sample size)
+se_difference <- sd_difference/sqrt(sample_size)
+
+# lower and upper bound for 95% confidence interval
+# alpha is 0.05 for 95% CI
+alpha = 0.05
+lower_ci_threshold <- mean_difference - qt(1-alpha/2, df=degrees_freedom) * se_difference
+upper_ci_threshold <- mean_difference + qt(1-alpha/2, df=degrees_freedom) * se_difference
+
+# store the CI for reference and print it
+mean_difference_ci <- c(lower_ci_threshold, upper_ci_threshold)
+print(mean_difference_ci)
+
+# check if 0 is within interval -> no statistical diff
+if (0 > lower_ci_threshold && 0 < upper_ci_threshold){
+  print("No evidence of a difference between populations based on sample")
+} else{
+  print("There is a evidence of a difference between populations based on sample")
+}
 ```
