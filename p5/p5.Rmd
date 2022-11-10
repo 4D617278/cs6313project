@@ -1,0 +1,104 @@
+---
+title: Mini Project 5
+author: Arshia Elahi and Brandon Luo
+output: pdf_document
+---
+
+# Contributions
+
+Arshia Elahi - 1
+
+Brandon Luo - 2
+
+# Answers
+
+```{=latex}
+\begin{enumerate}
+\item
+    \begin{enumerate}
+        \item
+        Since the 95\% confidence interval contains 0, we fail to reject the null hypothesis (males and females do not differ in body temperature). There does not appear to be a significant difference between male and female body temperatures.
+        \item
+        Since the 95\% confidence interval contains 0, we fail to reject the null hypothesis (males and females do not differ in heart rate). There does not appear to be a significant difference between male and female heart rates.
+        \item
+        Since the correlation coefficient is 0.2536564, there is a weak positive linear relationship between body temperature and heart rate.
+
+        This relationship does depend on gender since the correlation coefficients are different for males and females.
+    \end{enumerate}
+\item
+    \begin{enumerate}
+        \item
+        \item
+        \item
+        \item
+    \end{enumerate}
+\end{enumerate}
+```
+
+# Code 
+```{r, fig.width=5, fig.height=4}
+# 1a
+data = read.csv('bodytemp-heartrate.csv')
+
+men_temp = data[data$gender == 1, ]$body_temperature
+female_temp = data[data$gender == 2, ]$body_temperature
+
+# exploratory data analysis
+summary(men_temp)
+summary(female_temp)
+
+# normality
+qqnorm(men_temp)
+qqnorm(female_temp)
+
+men_sd = sd(men_temp) / sqrt(length(men_temp))
+female_sd = sd(female_temp) / sqrt(length(female_temp))
+std_err = men_sd + female_sd
+
+center = mean(men_temp) - mean(female_temp)
+margin = 2 * qnorm(0.975) * std_err
+
+c(center - margin, center + margin)
+
+# 1b
+
+men_heart_rate = data[data$gender == 1, ]$heart_rate
+female_heart_rate = data[data$gender == 2, ]$heart_rate
+
+# exploratory data analysis
+summary(men_heart_rate)
+summary(female_heart_rate)
+
+# normality
+qqnorm(men_heart_rate)
+qqnorm(female_heart_rate)
+
+men_sd = sd(men_heart_rate) / sqrt(length(men_heart_rate))
+female_sd = sd(female_heart_rate) / sqrt(length(female_heart_rate))
+std_err = men_sd + female_sd
+
+center = mean(men_heart_rate) - mean(female_heart_rate)
+margin = 2 * qnorm(0.975) * std_err
+
+c(center - margin, center + margin)
+
+# 1c
+
+# scatter plot
+attach(data)
+
+plot(body_temperature, heart_rate)
+
+detach(data)
+
+cor(data["body_temperature"], data["heart_rate"])
+
+cor(men_temp, men_heart_rate)
+
+cor(female_temp, female_heart_rate)
+
+# 2a
+# 2b
+# 2c
+# 2d
+```
