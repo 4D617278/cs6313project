@@ -23,7 +23,7 @@ Arshia Elahi - 2
         \item
         Since the correlation coefficient is 0.2536564, there is a weak positive linear relationship between body temperature and heart rate.
 
-        This relationship does depend on gender since the correlation coefficients are different for males and females.
+        This relationship does not seem to depend on gender since the intercepts and slopes of the models predicted by linear regression are approximately the same.
     \end{enumerate}
 \item
     \begin{enumerate}
@@ -36,47 +36,47 @@ Arshia Elahi - 2
 ```
 
 # Code 
-```{r, fig.width=5, fig.height=4}
+```{r, fig.width=4, fig.height=3}
 # 1a
 data = read.csv('bodytemp-heartrate.csv')
 
-men_temp = data[data$gender == 1, ]$body_temperature
+male_temp = data[data$gender == 1, ]$body_temperature
 female_temp = data[data$gender == 2, ]$body_temperature
 
 # exploratory data analysis
-summary(men_temp)
+summary(male_temp)
 summary(female_temp)
 
 # normality
-qqnorm(men_temp)
+qqnorm(male_temp)
 qqnorm(female_temp)
 
 # confidence interval
-men_sd = sd(men_temp) / sqrt(length(men_temp))
+male_sd = sd(male_temp) / sqrt(length(male_temp))
 female_sd = sd(female_temp) / sqrt(length(female_temp))
-std_err = men_sd + female_sd
-center = mean(men_temp) - mean(female_temp)
+std_err = male_sd + female_sd
+center = mean(male_temp) - mean(female_temp)
 margin = 2 * qnorm(0.975) * std_err
 c(center - margin, center + margin)
 
 # 1b
 
-men_heart_rate = data[data$gender == 1, ]$heart_rate
+male_heart_rate = data[data$gender == 1, ]$heart_rate
 female_heart_rate = data[data$gender == 2, ]$heart_rate
 
 # exploratory data analysis
-summary(men_heart_rate)
+summary(male_heart_rate)
 summary(female_heart_rate)
 
 # normality
-qqnorm(men_heart_rate)
+qqnorm(male_heart_rate)
 qqnorm(female_heart_rate)
 
 # confidence interval
-men_sd = sd(men_heart_rate) / sqrt(length(men_heart_rate))
+male_sd = sd(male_heart_rate) / sqrt(length(male_heart_rate))
 female_sd = sd(female_heart_rate) / sqrt(length(female_heart_rate))
-std_err = men_sd + female_sd
-center = mean(men_heart_rate) - mean(female_heart_rate)
+std_err = male_sd + female_sd
+center = mean(male_heart_rate) - mean(female_heart_rate)
 margin = 2 * qnorm(0.975) * std_err
 c(center - margin, center + margin)
 
@@ -87,9 +87,15 @@ attach(data)
 plot(body_temperature, heart_rate)
 detach(data)
 
+# correlation coefficient
 cor(data["body_temperature"], data["heart_rate"])
-cor(men_temp, men_heart_rate)
-cor(female_temp, female_heart_rate)
+
+# linear regression
+male_model = lm(male_temp ~ male_heart_rate)
+female_model = lm(female_temp ~ female_heart_rate)
+
+male_model
+female_model
 
 # 2a
 # 2b
