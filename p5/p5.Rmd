@@ -28,15 +28,78 @@ Arshia Elahi - 2
 \item
     \begin{enumerate}
         \item
+		The estimate of coverage probabilities for n = 5, lambda = 0.01 is 0.815 for the large sample z-interval and 0.8964 for the parametric bootstrap percentile method interval.
         \item
+		\begin{tabular}{|c|c|c|c|}
+		\hline
+		N & $\lambda$ & Z CI Rate & Bootstrap CI Rate \\
+		\hline 
+		5  &  0.01  &  0.815  &  0.8964  \\ 
+		\hline 
+		5  &  0.1  &  0.8232  &  0.8854  \\ 
+		\hline 
+		5  &  1  &  0.8092  &  0.8902  \\ 
+		\hline 
+		5  &  10  &  0.8036  &  0.892  \\ 
+		\hline 
+		10  &  0.01  &  0.8754  &  0.9218  \\ 
+		\hline 
+		10  &  0.1  &  0.8734  &  0.9156  \\ 
+		\hline 
+		10  &  1  &  0.874  &  0.9184  \\ 
+		\hline 
+		10  &  10  &  0.8688  &  0.9222  \\ 
+		\hline 
+		30  &  0.01  &  0.914  &  0.9398  \\ 
+		\hline 
+		30  &  0.1  &  0.9116  &  0.9376  \\ 
+		\hline 
+		30  &  1  &  0.9144  &  0.938  \\ 
+		\hline 
+		30  &  10  &  0.9136  &  0.946  \\ 
+		\hline 
+		100  &  0.01  &  0.9374  &  0.9504  \\ 
+		\hline 
+		100  &  0.1  &  0.9352  &  0.9468  \\ 
+		\hline 
+		100  &  1  &  0.9394  &  0.9452  \\ 
+		\hline 
+		100  &  10  &  0.939  &  0.95  \\ 
+		\hline 
+		\end{tabular}
         \item
+		For the large-sample (Z-based CI), we need at least N = 100 to capture the true mean 94\% of the time. 
+		Since we desire a 95\% confidence interval we can conclude we should aim for N > 100 to be accurate. 
+
+		For the bootstrap method, we capture the true mean about 94\% of the time for N >= 30. 
+		This is still shy of our 95\% goal, however it performs equivalent to the Z-based CI at N = 100 at just N = 30. 
+		At N = 100, the bootstrap result captures the mean approximately 95\% of the time. 
+		For the interval to be accurate overall, N >= 100 works good for the bootstrap method. 
+
+		We would say that the bootstrap method is more accurate as for every combination of n and lambda, it outperforms the Z-based CI method in rate of capturing the true mean. 
+		However, as the size of n increases, we can observe that this difference between the success rate of bootstrap and z-based CI decreases (less significant performance difference). 
+
+		We would recommend the bootstrap method for smaller values of N (N <= 30) since it greatly outperforms the z-based CI method. 
+		However, as N gets larger, the difference in performance is significantly reduced. 
+		Because the bootstrap method takes much longer (requires sorting and another 1000 replications), the z-based CI method executes much faster. 
+		So, the z-based CI method should be used for larger values of N (N > 100), since it performs approximately the same as the bootstrap method while being much faster to compute.
+
+		As we change lambda for a given n, we observe that the proportion (success rate) of successfully capturing the true mean within the constructed confidence interval does not significantly change, so the answers likely don’t depend on lambda. 
+		This holds true in both the Z-based CI and the bootstrap-based CI. 
+		However, it is clear that as we increase n, there is a significant increase in the proportion (success rate) of successfully capturing the true mean within our constructed interval. 
+		This holds true in both the Z-based CI and the bootstrap-based CI. 
+		Thus, the answers depend on n. 
         \item
+		No, because the trends overall on columns (trend as n increases) is consistent among all values of lambda. 
+		Essentially, we observe that as n increases for any given lambda, the accuracy rate increases for both methods of CI. 
+		Furthermore, for any given lambda, the difference between the performance of the bootstrap method and the z-based CI method decreases as n increases. 
+		This is because the results depend much more on n as opposed to lambda.
     \end{enumerate}
 \end{enumerate}
 ```
 
 # Code 
-```{r, fig.width=4, fig.height=3}
+```{r, comment=NA, fig.width=4, fig.height=3}
 # 1a
 data = read.csv('bodytemp-heartrate.csv')
 
@@ -56,7 +119,7 @@ male_sd = sd(male_temp) / sqrt(length(male_temp))
 female_sd = sd(female_temp) / sqrt(length(female_temp))
 std_err = male_sd + female_sd
 center = mean(male_temp) - mean(female_temp)
-margin = 2 * qnorm(0.975) * std_err
+margin = qnorm(0.975) * std_err
 c(center - margin, center + margin)
 
 # 1b
@@ -77,7 +140,7 @@ male_sd = sd(male_heart_rate) / sqrt(length(male_heart_rate))
 female_sd = sd(female_heart_rate) / sqrt(length(female_heart_rate))
 std_err = male_sd + female_sd
 center = mean(male_heart_rate) - mean(female_heart_rate)
-margin = 2 * qnorm(0.975) * std_err
+margin = qnorm(0.975) * std_err
 c(center - margin, center + margin)
 
 # 1c
@@ -85,6 +148,8 @@ c(center - margin, center + margin)
 # exploratory analysis
 attach(data)
 plot(body_temperature, heart_rate)
+summary(body_temperature)
+summary(heart_rate)
 detach(data)
 
 # correlation coefficient
@@ -97,8 +162,77 @@ female_model = lm(female_temp ~ female_heart_rate)
 male_model
 female_model
 
-# 2a
-# 2b
-# 2c
-# 2d
+# 2a,b
+prop_within_interval_z <- function(n, lambda)
+{
+  correct = 0
+  alpha = 0.05
+  quantile = 1 - (alpha / 2)
+  z_score = qnorm(quantile)
+  z_score_n = z_score / sqrt(n) 
+  mean_real = 1 / lambda
+
+  for (x in 1:5000)
+  {
+    U <- rexp(n, lambda)
+    mean_sample <- mean(U)
+    std_sample <- sd(U)
+
+	margin = z_score_n * std_sample
+
+    upper_bound = mean_sample + margin
+    lower_bound = mean_sample - margin
+    
+    if(lower_bound <= mean_real && mean_real <= upper_bound)
+    {
+      correct = correct + 1
+    }
+    
+  }
+  
+  return(correct / 5000)
+}
+
+prop_within_interval_bootstrap <- function(n, lambda)
+{
+  correct = 0
+  mean_real = 1 / lambda
+
+  for (x in 1:5000)
+  {
+    U <- rexp(n, lambda)
+    lambda_adjusted = 1 / mean(U)
+
+   	vals <- replicate(1000, mean(rexp(n, lambda_adjusted)))
+    boundaries <- sort(vals)[c(25, 975)]
+    
+    lower_bound = boundaries[1]
+    upper_bound = boundaries[2]
+    
+    if(lower_bound <= mean_real && mean_real <= upper_bound)
+    {
+      correct = correct + 1
+    }
+    
+  }
+  
+  return(correct / 5000)
+}
+
+n_values <- list(5, 10, 30, 100)
+lambda_values <- list(0.01, 0.1, 1, 10)
+
+for(n in n_values)
+{
+  for(lambda in lambda_values)
+  {
+    z_ci_rate <- prop_within_interval_z(n, lambda)
+    bootstrap_ci_rate <- prop_within_interval_bootstrap(n, lambda)
+    row = paste(n, " & ", lambda, " & ", z_ci_rate, " & ", bootstrap_ci_rate, " \\\\", "\n")
+	sink("table.tex", append=TRUE)
+	cat(row)
+	cat("\\hline", "\n")
+	sink()
+  }
+}
 ```
