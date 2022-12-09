@@ -1,0 +1,58 @@
+---
+title: Mini Project 6
+author: Arshia Elahi and Brandon Luo
+output: pdf_document
+---
+
+# Contributions
+
+Arshia Elahi, Brandon Luo - 1
+
+# Answers
+
+```{=latex}
+\begin{enumerate}
+\item
+\end{enumerate}
+```
+
+# Code 
+```{r, comment=NA, fig.width=4, fig.height=3}
+# 1
+data = read.csv("prostate_cancer.csv")
+
+str(data)
+
+# vesinv is qualitative
+data$vesinv = factor(data$vesinv)
+
+full = lm(psa ~ ., data)
+null = lm(psa ~ 1, data)
+psa_model = step(null, list(lower = null, upper = full), direction="forward")
+
+# bad model
+plot(fitted(psa_model), resid(psa_model))
+abline(h = 0)
+
+# use ln(psa)
+full = lm(log(psa) ~ ., data)
+null = lm(log(psa) ~ 1, data)
+psa_model = step(null, list(lower = null, upper = full), direction="forward")
+
+# better model
+plot(fitted(psa_model), resid(psa_model))
+abline(h = 0)
+
+qqnorm(resid(psa_model))
+qqline(resid(psa_model))
+
+cols = colnames(data)
+predictors = which(cols != "psa")
+
+# get most frequent value and column means
+newdata = lapply(data[predictors], mean)
+newdata$vesinv = tail(names(sort(table(data$vesinv))), 1) 
+newdata
+
+predict(psa_model, newdata=newdata)
+```
