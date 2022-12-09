@@ -13,6 +13,11 @@ Arshia Elahi, Brandon Luo - 1
 ```{=latex}
 \begin{enumerate}
 \item
+We used the forward algorithm to build a "reasonably good" linear model for the data by taking log(PSA) as the response variable. 
+We used log(PSA) instead of PSA because the means of the residuals for the PSA model are not approximately 0 as the graph of the fitted and residual values shows points with values of ~150 for the residual value and there are not corresponding points with negative residual values for the same fitted value. 
+The model assumptions for the log(PSA) model are approximately satisfied because the graph of fitted and residual values has a scale of about -1 to 1 and the residuals have a mean of about 0. 
+The normal Q-Q plot is approximately linear and a time series plot can not be calculated to check the independence of the errors.
+The predicted value of the PSA value for a patient whose quantitative predictors are at the sample means of the variables and qualitative predictors are at the most frequent category is 2.478669.
 \end{enumerate}
 ```
 
